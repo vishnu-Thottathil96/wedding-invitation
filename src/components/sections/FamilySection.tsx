@@ -19,7 +19,7 @@ interface FamilySectionProps {
 }
 
 // ── 8-Pointed Faceted Golden Compass Star (Scaled to Match Screenshot) ──
-const FacetedStar: React.FC<{ className?: string }> = ({ className = 'w-[110px] h-[110px]' }) => (
+export const FacetedStar: React.FC<{ className?: string }> = ({ className = 'w-[110px] h-[110px]' }) => (
   <svg
     viewBox="0 0 100 100"
     className={`${className} pointer-events-none select-none`}
@@ -110,7 +110,7 @@ const GoldenAsterisk: React.FC<{ className?: string }> = ({ className = 'w-4 h-4
 );
 
 // ── Golden Divider with Center Asterisk ──
-const FloralDivider: React.FC<{ widthClass?: string }> = ({ widthClass = 'w-52 sm:w-60' }) => (
+export const FloralDivider: React.FC<{ widthClass?: string }> = ({ widthClass = 'w-52 sm:w-60' }) => (
   <div className={`flex items-center justify-center ${widthClass} mx-auto my-3 sm:my-3.5`}>
     <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[#C5A059]/80 to-[#C5A059]" />
     <div className="mx-2.5">
@@ -121,7 +121,7 @@ const FloralDivider: React.FC<{ widthClass?: string }> = ({ widthClass = 'w-52 s
 );
 
 // ── Top-Left Botanical Palm Frond (Matching Screenshot Layout) ──
-const BotanicalPalmFrond: React.FC = () => (
+export const BotanicalPalmFrond: React.FC = () => (
   <svg
     viewBox="0 0 190 320"
     fill="none"

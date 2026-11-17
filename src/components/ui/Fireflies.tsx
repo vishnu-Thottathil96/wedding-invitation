@@ -18,13 +18,33 @@ interface Firefly {
   wobbleOffsetY: number;
   wobbleAmpX: number;
   wobbleAmpY: number;
-  radius: number;
-  glowRadius: number;
+  size: number; // drawn sprite size in CSS px
   blinkSpeed: number;
   blinkPhase: number;
-  hue: number;
   maxOpacity: number;
 }
+
+// One soft golden glow, drawn once and reused for every firefly (much cheaper than
+// building a radial gradient per firefly per frame).
+let glowSprite: HTMLCanvasElement | null = null;
+const getGlowSprite = () => {
+  if (glowSprite) return glowSprite;
+  const s = 64;
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const g = c.getContext('2d')!;
+  const r = s / 2;
+  const grad = g.createRadialGradient(r, r, 0, r, r, r);
+  grad.addColorStop(0, 'hsla(50, 100%, 92%, 1)');
+  grad.addColorStop(0.12, 'hsla(49, 100%, 80%, 0.95)');
+  grad.addColorStop(0.3, 'hsla(48, 95%, 62%, 0.45)');
+  grad.addColorStop(0.6, 'hsla(45, 90%, 55%, 0.12)');
+  grad.addColorStop(1, 'hsla(45, 90%, 55%, 0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, s, s);
+  glowSprite = c;
+  return c;
+};
 
 export const Fireflies: React.FC<FirefliesProps> = ({
   count = 22,
@@ -37,149 +57,114 @@ export const Fireflies: React.FC<FirefliesProps> = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
+    // Respect "reduce motion" settings: no fireflies at all
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+    const sprite = getGlowSprite();
     let width = 0;
     let height = 0;
-    let dpr = 1;
 
     const resize = () => {
-      if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // 1.5x is plenty for soft dots and keeps the canvas light on high-DPI phones
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = rect.width;
       height = rect.height;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-
     resize();
-    window.addEventListener('resize', resize);
 
-    // Initialize fireflies with gentle, whole-screen linear drifts
-    const fireflies: Firefly[] = Array.from({ length: count }, () => {
-      // Tiny delicate core radius (1.1px to 1.7px)
-      const radius = Math.random() * 0.6 + 1.1;
-      // Gentle drift angles across the screen
+    // Fewer fireflies on small screens
+    const n = width < 640 ? Math.ceil(count * 0.6) : count;
+    const fireflies: Firefly[] = Array.from({ length: n }, () => {
       const dirX = Math.random() > 0.5 ? 1 : -1;
       const dirY = Math.random() > 0.35 ? -1 : 1; // gentle preference to float upwards
-
+      const radius = Math.random() * 0.6 + 1.1;
       return {
         x: Math.random() * (width || 400),
         y: Math.random() * (height || 800),
-        // Gentle, slow, peaceful continuous drift across whole screen
         vx: (Math.random() * 0.28 + 0.12) * dirX * speedMultiplier,
         vy: (Math.random() * 0.22 + 0.08) * dirY * speedMultiplier,
-        // Very slow organic flight wobbles (fluttering in air currents)
         wobbleSpeedX: Math.random() * 0.012 + 0.008,
         wobbleSpeedY: Math.random() * 0.012 + 0.008,
         wobbleOffsetX: Math.random() * Math.PI * 2,
         wobbleOffsetY: Math.random() * Math.PI * 2,
         wobbleAmpX: Math.random() * 0.4 + 0.2,
         wobbleAmpY: Math.random() * 0.35 + 0.2,
-        radius,
-        // Soft, subtle glow (5px - 9px), NOT giant street lamps
-        glowRadius: radius * (Math.random() * 2 + 4.5),
-        // Slow, lazy blinking (takes 5-10 seconds per pulse cycle)
+        size: radius * (Math.random() * 2 + 4.5) * 2,
         blinkSpeed: Math.random() * 0.01 + 0.006,
         blinkPhase: Math.random() * Math.PI * 2,
-        // Natural firefly bioluminescence hue: warm golden amber/yellow (46 - 52)
-        hue: Math.random() * 6 + 46,
-        // Subtle, elegant opacity (never harsh 1.0 headlight)
         maxOpacity: Math.random() * 0.25 + 0.55,
       };
     });
 
+    const lightMultiplier = isLightOn ? 1.0 : 0.8;
     let frame = 0;
+    let rafId = 0;
+    let running = false;
 
     const render = () => {
       frame++;
       ctx.clearRect(0, 0, width, height);
 
-      const lightMultiplier = isLightOn ? 1.0 : 0.8;
-
       for (let i = 0; i < fireflies.length; i++) {
         const f = fireflies[i];
+        f.x += f.vx + Math.sin(frame * f.wobbleSpeedX + f.wobbleOffsetX) * f.wobbleAmpX;
+        f.y += f.vy + Math.cos(frame * f.wobbleSpeedY + f.wobbleOffsetY) * f.wobbleAmpY;
 
-        // ── 1. Smooth Continuous Whole-Screen Flight ──
-        // Base linear glide + gentle sinusoidal breeze wobble
-        const flutterX =
-          Math.sin(frame * f.wobbleSpeedX + f.wobbleOffsetX) * f.wobbleAmpX;
-        const flutterY =
-          Math.cos(frame * f.wobbleSpeedY + f.wobbleOffsetY) * f.wobbleAmpY;
+        if (f.x < -25) { f.x = width + 20; f.y = Math.random() * height; }
+        else if (f.x > width + 25) { f.x = -20; f.y = Math.random() * height; }
+        if (f.y < -25) { f.y = height + 20; f.x = Math.random() * width; }
+        else if (f.y > height + 25) { f.y = -20; f.x = Math.random() * width; }
 
-        f.x += f.vx + flutterX;
-        f.y += f.vy + flutterY;
-
-        // Wrap around borders gracefully so they traverse the WHOLE screen
-        if (f.x < -25) {
-          f.x = width + 20;
-          f.y = Math.random() * height;
-        } else if (f.x > width + 25) {
-          f.x = -20;
-          f.y = Math.random() * height;
-        }
-
-        if (f.y < -25) {
-          f.y = height + 20;
-          f.x = Math.random() * width;
-        } else if (f.y > height + 25) {
-          f.y = -20;
-          f.x = Math.random() * width;
-        }
-
-        // ── 2. Slow, Dreamy Bioluminescent Breathing ──
-        // Smooth sine wave pulse: long gentle fade-in, calm glow, gentle fade-out
-        const pulseCycle = Math.sin(frame * f.blinkSpeed + f.blinkPhase);
-        // Minimum resting glow of 0.1, pulsing up smoothly to maxOpacity
-        const normalizedGlow = Math.max(0, pulseCycle);
-        const opacity =
-          (0.12 + Math.pow(normalizedGlow, 1.8) * (f.maxOpacity - 0.12)) *
-          lightMultiplier;
-
-        // ── 3. Render Tiny, Realistic Firefly Light ──
-        // Soft delicate outer aura
-        const glow = ctx.createRadialGradient(
-          f.x,
-          f.y,
-          0,
-          f.x,
-          f.y,
-          f.glowRadius
-        );
-        glow.addColorStop(0, `hsla(${f.hue}, 95%, 65%, ${opacity * 0.75})`);
-        glow.addColorStop(
-          0.45,
-          `hsla(${f.hue - 4}, 90%, 55%, ${opacity * 0.22})`
-        );
-        glow.addColorStop(1, 'transparent');
-
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.glowRadius, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        // Tiny central golden spark core
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(50, 100%, 88%, ${Math.min(1, opacity + 0.2)})`;
-        ctx.fill();
+        const pulse = Math.max(0, Math.sin(frame * f.blinkSpeed + f.blinkPhase));
+        ctx.globalAlpha = (0.12 + Math.pow(pulse, 1.8) * (f.maxOpacity - 0.12)) * lightMultiplier;
+        const half = f.size / 2;
+        ctx.drawImage(sprite, f.x - half, f.y - half, f.size, f.size);
       }
-
-      animationFrameId = requestAnimationFrame(render);
+      ctx.globalAlpha = 1;
+      rafId = requestAnimationFrame(render);
     };
 
-    render();
+    // Only animate while the canvas is on screen and the tab is visible
+    let onScreen = false;
+    const update = () => {
+      const shouldRun = onScreen && document.visibilityState === 'visible';
+      if (shouldRun && !running) {
+        running = true;
+        rafId = requestAnimationFrame(render);
+      } else if (!shouldRun && running) {
+        running = false;
+        cancelAnimationFrame(rafId);
+      }
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      update();
+    });
+    io.observe(canvas);
+    document.addEventListener('visibilitychange', update);
+
+    let resizeTimer = 0;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    };
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationFrameId);
+      io.disconnect();
+      document.removeEventListener('visibilitychange', update);
+      window.removeEventListener('resize', onResize);
+      clearTimeout(resizeTimer);
+      cancelAnimationFrame(rafId);
     };
   }, [count, isLightOn, speedMultiplier]);
 
-  return <canvas ref={canvasRef} className={className} />;
+  return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 };

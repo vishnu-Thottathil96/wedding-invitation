@@ -1,26 +1,31 @@
-import { useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import './index.css';
 import { weddingData } from './data/wedding';
 
 // UI Chrome
 import { ScrollProgress } from './components/ui/ScrollProgress';
-import { AudioPlayer } from './components/ui/AudioPlayer';
+import { AudioPlayer, type AudioPlayerHandle } from './components/ui/AudioPlayer';
 import { WelcomeGate } from './components/ui/WelcomeGate';
 
 // Sections
 import { HeroSection } from './components/sections/HeroSection';
-import { StorySection } from './components/sections/StorySection';
-import { FamilySection } from './components/sections/FamilySection';
-import { CloudMemoriesSection } from './components/sections/CloudMemoriesSection';
-import { FooterSection } from './components/sections/FooterSection';
+
+// Sections below the first screen load in the background while the guest opens the envelope
+const StorySection = lazy(() => import('./components/sections/StorySection').then((m) => ({ default: m.StorySection })));
+const FamilySection = lazy(() => import('./components/sections/FamilySection').then((m) => ({ default: m.FamilySection })));
+const VenueSection = lazy(() => import('./components/sections/VenueSection').then((m) => ({ default: m.VenueSection })));
+const CloudMemoriesSection = lazy(() => import('./components/sections/CloudMemoriesSection').then((m) => ({ default: m.CloudMemoriesSection })));
+const FooterSection = lazy(() => import('./components/sections/FooterSection').then((m) => ({ default: m.FooterSection })));
 
 export default function App() {
   const [hasEntered, setHasEntered] = useState<boolean>(false);
+  const playerRef = useRef<AudioPlayerHandle>(null);
 
   const {
     couple,
     families,
     weddingDate,
+    venue,
     cloudMemories,
     music,
   } = weddingData;
@@ -37,6 +42,7 @@ export default function App() {
       {/* ── Welcome Gate with Lottie Paper Plane & Confetti ── */}
       {!hasEntered && (
         <WelcomeGate
+          onTap={() => playerRef.current?.start()}
           onOpen={() => setHasEntered(true)}
           brideName={couple.brideName}
           groomName={couple.groomName}
@@ -57,6 +63,7 @@ export default function App() {
         onScrollToStory={handleScrollToStory}
       />
 
+      <Suspense fallback={null}>
       {/* ── 2. Story Section ("Our Story" with Light String Pull) ── */}
       <StorySection />
 
@@ -66,6 +73,15 @@ export default function App() {
         brideFamily={families.bride}
         groomName={couple.groomName}
         brideName={couple.brideName}
+      />
+
+      {/* ── Venue: bride's residence, opens Google Maps ── */}
+      <VenueSection
+        name={venue.name}
+        address={venue.address}
+        mapUrl={venue.mapUrl}
+        dateDisplay={weddingDate.display}
+        muhoortham={weddingDate.muhoortham}
       />
 
       {/* ── 4. Memories ("Above the Clouds" Cloud-Parallax) ── */}
@@ -78,9 +94,11 @@ export default function App() {
         initials={couple.initials}
         hashtag={couple.hashtag}
       />
+      </Suspense>
 
       {/* ── Fixed Bottom-Right Audio Player Toggle ── */}
       <AudioPlayer
+        ref={playerRef}
         src={music.src}
         title={music.title}
         artist={music.artist}

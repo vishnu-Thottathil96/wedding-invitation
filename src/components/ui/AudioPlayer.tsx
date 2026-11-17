@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
 import { Volume2, VolumeX, Music } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -8,11 +8,16 @@ interface AudioPlayerProps {
   artist?: string;
 }
 
-export const AudioPlayer: React.FC<AudioPlayerProps> = ({
+export interface AudioPlayerHandle {
+  /** Start the song at full volume. Call it from a tap/click so browsers allow sound. */
+  start: () => void;
+}
+
+export const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(({
   src,
   title = 'Kalyana Vasantham',
   artist = 'Carnatic Tanpura & Temple Bells',
-}) => {
+}, ref) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [hasInteracted, setHasInteracted] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(true);
@@ -148,6 +153,29 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }
   };
 
+  // Started by the envelope tap on the intro screen: song plays loud from the start
+  const start = () => {
+    setHasInteracted(true);
+    setShowTooltip(false);
+    if (isPlaying) return;
+
+    if (src && audioRef.current) {
+      const audio = audioRef.current;
+      audio.volume = 1;
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          startSynthDrone();
+          setIsPlaying(true);
+        });
+      return;
+    }
+    startSynthDrone();
+    setIsPlaying(true);
+  };
+
+  useImperativeHandle(ref, () => ({ start }));
+
   const togglePlay = () => {
     setHasInteracted(true);
     setShowTooltip(false);
@@ -242,4 +270,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </motion.button>
     </div>
   );
-};
+});
+
+AudioPlayer.displayName = 'AudioPlayer';

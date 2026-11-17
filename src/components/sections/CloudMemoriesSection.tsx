@@ -3,15 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CloudMemory } from '../../data/wedding';
 
-// Repeating rhythm of frame shapes for the masonry layout:
-// temple-arch tops mixed with soft rectangles, in slightly different heights.
-const FRAME_PATTERN = [
-  { arch: true, aspect: 'aspect-[2/3]' },
-  { arch: false, aspect: 'aspect-[4/5]' },
-  { arch: false, aspect: 'aspect-[2/3]' },
-  { arch: true, aspect: 'aspect-[3/4]' },
-  { arch: false, aspect: 'aspect-[3/4]' },
-];
+// Repeating rhythm of rectangular frame heights for the masonry layout
+const FRAME_PATTERN = ['aspect-[2/3]', 'aspect-[4/5]', 'aspect-[3/4]', 'aspect-[2/3]', 'aspect-[3/4]', 'aspect-[4/5]'];
 
 // Gold double stripe, like the border of a Kerala kasavu saree
 const KasavuBorder: React.FC<{ flip?: boolean }> = ({ flip }) => (
@@ -93,7 +86,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
       {/* Faint handloom texture */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none opacity-[0.35] mix-blend-multiply"
+        className="absolute inset-0 pointer-events-none opacity-[0.35]"
         style={{
           backgroundImage:
             'repeating-linear-gradient(90deg, rgba(184,137,46,0.05) 0px, rgba(184,137,46,0.05) 1px, transparent 1px, transparent 4px)',
@@ -124,8 +117,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
         {/* ── Masonry gallery: 2 columns on phones, 3 on tablets, 4 on large screens ── */}
         <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-5">
           {memories.map((item, index) => {
-            const frame = FRAME_PATTERN[index % FRAME_PATTERN.length];
-            const shape = frame.arch ? 'rounded-t-[999px] rounded-b-md' : 'rounded-md';
+            const aspect = FRAME_PATTERN[index % FRAME_PATTERN.length];
             const hasNote = Boolean(item.title || item.caption || item.location || item.date);
             return (
               <motion.figure
@@ -140,11 +132,11 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
                   type="button"
                   onClick={() => setOpenIndex(index)}
                   aria-label={`Open photo ${index + 1} of ${total}`}
-                  className={`group relative block w-full overflow-hidden ${shape} ${frame.aspect} bg-[#E9DDC4] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#B8892E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F2E4] shadow-[0_10px_28px_rgba(88,24,30,0.14)] transition-shadow duration-500 hover:shadow-[0_16px_40px_rgba(88,24,30,0.24)]`}
+                  className={`group relative block w-full overflow-hidden rounded-md ${aspect} bg-[#E9DDC4] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#B8892E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F2E4] shadow-[0_10px_28px_rgba(88,24,30,0.14)] transition-shadow duration-500 hover:shadow-[0_16px_40px_rgba(88,24,30,0.24)]`}
                 >
                   <img
                     src={item.thumb || item.image}
-                    alt={item.title || `Aashil & Anaswara — photo ${index + 1}`}
+                    alt={item.title || `Ashil & Anaswara — photo ${index + 1}`}
                     className="absolute inset-0 w-full h-full object-cover object-[center_60%] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
                     loading="lazy"
                     decoding="async"
@@ -153,7 +145,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
                   {/* Thin gold inner frame (passe-partout) */}
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-[7px] sm:inset-[9px] border border-[#F3D78A]/70 ${frame.arch ? 'rounded-t-[999px] rounded-b-[3px]' : 'rounded-[3px]'} pointer-events-none transition-colors duration-500 group-hover:border-[#F3D78A]`}
+                    className={`absolute inset-[7px] sm:inset-[9px] border border-[#F3D78A]/70 rounded-[3px] pointer-events-none transition-colors duration-500 group-hover:border-[#F3D78A]`}
                   />
 
                 </button>
@@ -213,7 +205,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
               <motion.img
                 key={selectedMemory.id}
                 src={selectedMemory.image}
-                alt={selectedMemory.title || `Aashil & Anaswara — photo ${openIndex + 1}`}
+                alt={selectedMemory.title || `Ashil & Anaswara — photo ${openIndex + 1}`}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}

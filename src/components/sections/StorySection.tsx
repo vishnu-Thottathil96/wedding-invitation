@@ -139,6 +139,14 @@ export const StorySection: React.FC = () => {
               <stop offset="100%" stopColor="#D96E06" />
             </radialGradient>
 
+            {/* Soft glow around a lit bulb (replaces expensive blur/drop-shadow filters) */}
+            <radialGradient id="bulbHalo" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#FFE9A0" stopOpacity="0.95" />
+              <stop offset="35%" stopColor="#FFC24A" stopOpacity="0.55" />
+              <stop offset="70%" stopColor="#FF9F2E" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#FF9F2E" stopOpacity="0" />
+            </radialGradient>
+
             {/* Unlit bulb gradient */}
             <radialGradient id="unlitBulb" cx="35%" cy="35%" r="65%">
               <stop offset="0%" stopColor="#4A3D32" />
@@ -180,12 +188,13 @@ export const StorySection: React.FC = () => {
                 <circle
                   cx={b.x}
                   cy={b.y + 15}
-                  r="20"
-                  fill="url(#litBulb)"
-                  style={{ ...fade, opacity: isLightOn ? 0.4 : 0, filter: 'blur(6px)' }}
+                  r="30"
+                  fill="url(#bulbHalo)"
+                  style={{ ...fade, opacity: isLightOn ? 1 : 0 }}
                 />
 
-                {/* Unlit glass orb (always underneath) */}
+                {/* Soft contact shadow + unlit glass orb (always underneath) */}
+                <circle cx={b.x} cy={b.y + 17} r="10.5" fill="rgba(0,0,0,0.35)" />
                 <circle
                   cx={b.x}
                   cy={b.y + 15}
@@ -193,7 +202,6 @@ export const StorySection: React.FC = () => {
                   fill="url(#unlitBulb)"
                   stroke="#45382B"
                   strokeWidth="0.8"
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}
                 />
 
                 {/* Lit glass orb, fades in on top */}
@@ -204,12 +212,7 @@ export const StorySection: React.FC = () => {
                   fill="url(#litBulb)"
                   stroke="#FFE48A"
                   strokeWidth="0.8"
-                  style={{
-                    ...fade,
-                    opacity: isLightOn ? 1 : 0,
-                    filter:
-                      'drop-shadow(0 0 10px rgba(255, 215, 80, 0.95)) drop-shadow(0 0 18px rgba(255, 170, 40, 0.6))',
-                  }}
+                  style={{ ...fade, opacity: isLightOn ? 1 : 0 }}
                 />
 
                 {/* Glass reflection highlight */}
@@ -390,7 +393,7 @@ export const StorySection: React.FC = () => {
         <div className="mt-5 sm:mt-6 w-[88%] max-w-[360px] sm:max-w-[400px] aspect-[9/13.5] rounded-[22px] sm:rounded-[26px] overflow-hidden relative shadow-[0_16px_50px_rgba(0,0,0,0.65)] border border-[#D4AF37]/25 transition-all duration-700">
           <img
             src="/images/story_couple.jpg"
-            alt="Aashil & Anaswara"
+            alt="Ashil & Anaswara"
             style={{ transitionDelay: isLightOn ? `${PHOTO_REVEAL_DELAY_MS}ms` : '0ms' }}
             className={`w-full h-full object-cover transition-all duration-1000 ${
               isLightOn

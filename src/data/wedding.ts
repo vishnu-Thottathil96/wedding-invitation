@@ -146,16 +146,16 @@ export const weddingData: WeddingData = {
     brideName: 'Anaswara',
     brideFullName: 'Anaswara',
     brideDegree: '',
-    groomName: 'Aashil',
-    groomFullName: 'Aashil',
+    groomName: 'Ashil',
+    groomFullName: 'Ashil',
     groomDegree: '',
     initials: 'A & A',
-    hashtag: '#AashilWedsAnaswara',
+    hashtag: '#AshilWedsAnaswara',
   },
 
   invocation: {
-    sanskrit: '॥ श्री महागणपतये नमः ॥ शुभमस्तु ॥',
-    tamil: '॥ ஓம் ஸ்ரீ கணேசாய நமஹ ॥',
+    sanskrit: '',
+    tamil: '',
     english: 'Together with their families invite you',
   },
 
@@ -166,7 +166,7 @@ export const weddingData: WeddingData = {
       sibling: '',
       grandparents: '',
       lineage: 'Traditional heritage',
-      blessing: 'With immense joy and gratitude in our hearts, we invite you to join hands with us as we bless our beloved son Aashil into marital bliss.',
+      blessing: 'With immense joy and gratitude in our hearts, we invite you to join hands with us as we bless our beloved son Ashil into marital bliss.',
       image: '/images/boy.png',
     },
     bride: {
@@ -182,12 +182,12 @@ export const weddingData: WeddingData = {
 
   weddingDate: {
     display: 'Saturday, 21st November 2026',
-    dateISO: '2026-11-21T10:30:00+05:30',
+    dateISO: '2026-11-21T12:25:00+05:30',
     dayOfWeek: 'Saturday',
     dateDay: '21',
     dateMonth: 'November',
     dateYear: '2026',
-    muhoortham: '10:30 – 11:30 AM',
+    muhoortham: '12:25 – 1:00 PM',
     muhoorthamLagna: 'Auspicious Muhurtham',
     timezone: 'Asia/Kolkata',
     timezoneLabel: 'IST (UTC+05:30)',
@@ -319,13 +319,6 @@ export const weddingData: WeddingData = {
     { id: 'g06', image: '/images/gallery/g06.jpg', thumb: '/images/gallery/thumbs/g06.jpg', rotation: 1.5 },
     { id: 'g07', image: '/images/gallery/g07.jpg', thumb: '/images/gallery/thumbs/g07.jpg', rotation: -3.5 },
     { id: 'g08', image: '/images/gallery/g08.jpg', thumb: '/images/gallery/thumbs/g08.jpg', rotation: 2 },
-    { id: 'g09', image: '/images/gallery/g09.jpg', thumb: '/images/gallery/thumbs/g09.jpg', rotation: -1 },
-    { id: 'g10', image: '/images/gallery/g10.jpg', thumb: '/images/gallery/thumbs/g10.jpg', rotation: 3.5 },
-    { id: 'g11', image: '/images/gallery/g11.jpg', thumb: '/images/gallery/thumbs/g11.jpg', rotation: -2.5 },
-    { id: 'g12', image: '/images/gallery/g12.jpg', thumb: '/images/gallery/thumbs/g12.jpg', rotation: 1 },
-    { id: 'g13', image: '/images/gallery/g13.jpg', thumb: '/images/gallery/thumbs/g13.jpg', rotation: -2 },
-    { id: 'g14', image: '/images/gallery/g14.jpg', thumb: '/images/gallery/thumbs/g14.jpg', rotation: 2.5 },
-    { id: 'g15', image: '/images/gallery/g15.jpg', thumb: '/images/gallery/thumbs/g15.jpg', rotation: -1.5 },
   ],
 
   dressCode: {
@@ -398,11 +391,11 @@ export const weddingData: WeddingData = {
   },
 
   venue: {
-    name: 'Krishnankoil Heritage Kalyana Mandapam',
-    address: 'Main Temple Road, Krishnankoil',
-    city: 'Virudhunagar District, Tamil Nadu — 626 190',
-    mapUrl: 'https://maps.google.com/?q=Krishnankoil+Temple+Virudhunagar',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15735.632297880195!2d77.625845!3d9.585521!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b06cf720dc55f5f%3A0xe13ba7f2b96e5797!2sKrishnankoil%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
+    name: "Bride's Residence",
+    address: 'The home of Mr. Bhaskaran & Mrs. Sajini',
+    city: '',
+    mapUrl: 'https://maps.app.goo.gl/s36Ezw7MbK8CpmLK7',
+    mapEmbedUrl: '',
   },
 
   images: {
@@ -415,9 +408,11 @@ export const weddingData: WeddingData = {
   },
 
   music: {
-    src: '', // Optional external audio; if empty, Web Audio synthesizer provides authentic Carnatic Tanpura & Veena drone!
-    title: 'Kalyana Vasantham (Traditional Auspicious Melody)',
-    artist: 'Nadaswaram & Tanpura Harmony',
+    // Song file lives in public/audio/ (change this path to swap the song).
+    // It starts at full volume when the guest taps the envelope seal.
+    src: '/audio/bgm.mp3',
+    title: 'Our Song',
+    artist: 'Ashil & Anaswara',
   },
 };
 

@@ -22,9 +22,9 @@ interface TimeRemaining {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   brideName = 'Anaswara',
-  groomName = 'Aashil',
-  dateISO = '2026-11-21T10:30:00+05:30',
-  muhoortham = '10:30 – 11:30 AM',
+  groomName = 'Ashil',
+  dateISO = '2026-11-21T12:25:00+05:30',
+  muhoortham = '12:25 – 1:00 PM',
   onScrollToStory,
 }) => {
   // Live countdown timer state
@@ -82,7 +82,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             Wide screens: softly blurred backdrop */}
         <img
           src="/images/hero_couple.jpg"
-          alt="Aashil & Anaswara"
+          alt="Ashil & Anaswara"
           className="w-full h-[calc(100%-6vh)] mt-[6vh] short-phone:h-[calc(100%-13vh)] short-phone:mt-[13vh] sm:h-[calc(100%-9vh)] sm:mt-[9vh] sm:object-[center_35%] lg:h-full lg:mt-0 object-cover object-[center_60%] [mask-image:linear-gradient(to_bottom,transparent,black_12%)] lg:[mask-image:none] lg:scale-110 lg:blur-2xl lg:brightness-75"
         />
 
@@ -143,7 +143,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </motion.div>
 
-          {/* Couple's Names: AASHIL & ANASWARA */}
+          {/* Couple's Names: ASHIL & ANASWARA */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -152,7 +152,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             <h1 className="flex flex-col items-center justify-center text-center">
               <span className="font-serif font-bold text-[2.3rem] short-phone:text-[2rem] sm:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-[#59131A] tracking-[0.15em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)] uppercase leading-[1.08]">
-                {groomName || 'AASHIL'}
+                {groomName || 'ASHIL'}
               </span>
               <span className="font-serif italic text-2xl sm:text-4xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#C98F22] my-0.5 sm:my-1 select-none font-light">
                 &
@@ -194,9 +194,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.65 }}
-            className="w-[88%] max-w-[340px] sm:max-w-[380px] rounded-[22px] px-4 py-3 short-phone:py-2 sm:px-8 sm:py-5 text-center backdrop-blur-md border border-[#E5D7C3]/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+            className="w-[88%] max-w-[340px] sm:max-w-[380px] rounded-[22px] px-4 py-3 short-phone:py-2 sm:px-8 sm:py-5 text-center border border-[#E5D7C3]/60 shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
             style={{
-              background: 'rgba(250, 243, 228, 0.55)',
+              background: 'rgba(250, 243, 228, 0.74)',
             }}
           >
             <p className="font-serif italic text-[#4E3A2E] text-[15px] sm:text-[16.5px] leading-snug tracking-wide">
@@ -206,7 +206,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               21 · NOVEMBER · 2026
             </h2>
             <p className="font-serif italic text-[#634E40] text-xs sm:text-sm tracking-wide">
-              Muhurtham · {muhoortham || '10:30 – 11:30 AM'}
+              Muhurtham · {muhoortham || '12:25 – 1:00 PM'}
             </p>
           </motion.div>
         </div>
