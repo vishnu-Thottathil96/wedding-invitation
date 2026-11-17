@@ -392,8 +392,10 @@ export const StorySection: React.FC = () => {
         {/* ── Main Couple Portrait Card ── */}
         <div className="mt-5 sm:mt-6 w-[88%] max-w-[360px] sm:max-w-[400px] aspect-[9/13.5] rounded-[22px] sm:rounded-[26px] overflow-hidden relative shadow-[0_16px_50px_rgba(0,0,0,0.65)] border border-[#D4AF37]/25 transition-all duration-700">
           <img
-            src="/images/story_couple.jpg"
+            src="/images/story_couple.webp"
             alt="Ashil & Anaswara"
+            loading="lazy"
+            decoding="async"
             style={{ transitionDelay: isLightOn ? `${PHOTO_REVEAL_DELAY_MS}ms` : '0ms' }}
             className={`w-full h-full object-cover transition-all duration-1000 ${
               isLightOn

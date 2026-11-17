@@ -206,6 +206,28 @@ export const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(({
     }
   };
 
+  // Don't compete with the first screen: start fetching the song only after the page
+  // has loaded (a tap before then still streams it immediately).
+  useEffect(() => {
+    if (!src) return;
+    let timer = 0;
+    const warmUp = () => {
+      timer = window.setTimeout(() => {
+        const audio = audioRef.current;
+        if (audio && audio.paused && audio.preload !== 'auto') {
+          audio.preload = 'auto';
+          audio.load();
+        }
+      }, 1200);
+    };
+    if (document.readyState === 'complete') warmUp();
+    else window.addEventListener('load', warmUp, { once: true });
+    return () => {
+      window.removeEventListener('load', warmUp);
+      clearTimeout(timer);
+    };
+  }, [src]);
+
   // Dismiss tooltip after 7 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -232,7 +254,7 @@ export const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(({
           ref={audioRef}
           src={src}
           loop
-          preload="auto"
+          preload="none"
           onEnded={() => setIsPlaying(false)}
         />
       )}

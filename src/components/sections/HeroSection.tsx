@@ -81,14 +81,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Phones: photo fills the screen, nudged down so faces clear the date card.
             Wide screens: softly blurred backdrop */}
         <img
-          src="/images/hero_couple.jpg"
+          src="/images/hero_couple.webp"
+          fetchPriority="low"
+          decoding="async"
           alt="Ashil & Anaswara"
           className="w-full h-[calc(100%-6vh)] mt-[6vh] short-phone:h-[calc(100%-13vh)] short-phone:mt-[13vh] sm:h-[calc(100%-9vh)] sm:mt-[9vh] sm:object-[center_35%] lg:h-full lg:mt-0 object-cover object-[center_60%] [mask-image:linear-gradient(to_bottom,transparent,black_12%)] lg:[mask-image:none] lg:scale-110 lg:blur-2xl lg:brightness-75"
         />
 
         {/* Wide screens: the full portrait photo, anchored right with a soft left edge */}
         <img
-          src="/images/hero_couple.jpg"
+          src="/images/hero_couple.webp"
+          fetchPriority="low"
+          decoding="async"
           alt=""
           aria-hidden="true"
           className="hidden lg:block absolute right-0 top-0 h-full w-[54%] object-cover object-[center_55%]"

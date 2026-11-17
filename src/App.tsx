@@ -8,9 +8,10 @@ import { AudioPlayer, type AudioPlayerHandle } from './components/ui/AudioPlayer
 import { WelcomeGate } from './components/ui/WelcomeGate';
 
 // Sections
-import { HeroSection } from './components/sections/HeroSection';
 
-// Sections below the first screen load in the background while the guest opens the envelope
+// Every section sits behind the envelope at first, so they all load in the background
+// while the guest is looking at it — the envelope itself shows up as fast as possible.
+const HeroSection = lazy(() => import('./components/sections/HeroSection').then((m) => ({ default: m.HeroSection })));
 const StorySection = lazy(() => import('./components/sections/StorySection').then((m) => ({ default: m.StorySection })));
 const FamilySection = lazy(() => import('./components/sections/FamilySection').then((m) => ({ default: m.FamilySection })));
 const VenueSection = lazy(() => import('./components/sections/VenueSection').then((m) => ({ default: m.VenueSection })));
@@ -52,6 +53,7 @@ export default function App() {
       {/* ── Top Golden Scroll Progress ── */}
       <ScrollProgress />
 
+      <Suspense fallback={null}>
       {/* ── 1. Hero Section ── */}
       <HeroSection
         brideName={couple.brideName}
@@ -63,7 +65,6 @@ export default function App() {
         onScrollToStory={handleScrollToStory}
       />
 
-      <Suspense fallback={null}>
       {/* ── 2. Story Section ("Our Story" with Light String Pull) ── */}
       <StorySection />
 

@@ -311,14 +311,14 @@ export const weddingData: WeddingData = {
   // Photo gallery ("Floating Memories"). Add a title/caption to any photo if you like.
   // Photos live in public/images/gallery (grid copies in /thumbs).
   cloudMemories: [
-    { id: 'g01', image: '/images/gallery/g01.jpg', thumb: '/images/gallery/thumbs/g01.jpg', rotation: -3 },
-    { id: 'g02', image: '/images/gallery/g02.jpg', thumb: '/images/gallery/thumbs/g02.jpg', rotation: 2.5 },
-    { id: 'g03', image: '/images/gallery/g03.jpg', thumb: '/images/gallery/thumbs/g03.jpg', rotation: -1.5 },
-    { id: 'g04', image: '/images/gallery/g04.jpg', thumb: '/images/gallery/thumbs/g04.jpg', rotation: 3 },
-    { id: 'g05', image: '/images/gallery/g05.jpg', thumb: '/images/gallery/thumbs/g05.jpg', rotation: -2 },
-    { id: 'g06', image: '/images/gallery/g06.jpg', thumb: '/images/gallery/thumbs/g06.jpg', rotation: 1.5 },
-    { id: 'g07', image: '/images/gallery/g07.jpg', thumb: '/images/gallery/thumbs/g07.jpg', rotation: -3.5 },
-    { id: 'g08', image: '/images/gallery/g08.jpg', thumb: '/images/gallery/thumbs/g08.jpg', rotation: 2 },
+    { id: 'g01', image: '/images/gallery/g01.webp', thumb: '/images/gallery/thumbs/g01.webp', rotation: -3 },
+    { id: 'g02', image: '/images/gallery/g02.webp', thumb: '/images/gallery/thumbs/g02.webp', rotation: 2.5 },
+    { id: 'g03', image: '/images/gallery/g03.webp', thumb: '/images/gallery/thumbs/g03.webp', rotation: -1.5 },
+    { id: 'g04', image: '/images/gallery/g04.webp', thumb: '/images/gallery/thumbs/g04.webp', rotation: 3 },
+    { id: 'g05', image: '/images/gallery/g05.webp', thumb: '/images/gallery/thumbs/g05.webp', rotation: -2 },
+    { id: 'g06', image: '/images/gallery/g06.webp', thumb: '/images/gallery/thumbs/g06.webp', rotation: 1.5 },
+    { id: 'g07', image: '/images/gallery/g07.webp', thumb: '/images/gallery/thumbs/g07.webp', rotation: -3.5 },
+    { id: 'g08', image: '/images/gallery/g08.webp', thumb: '/images/gallery/thumbs/g08.webp', rotation: 2 },
   ],
 
   dressCode: {
