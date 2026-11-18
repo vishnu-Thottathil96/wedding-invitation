@@ -84,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           src="/images/hero_couple.webp"
           fetchPriority="low"
           decoding="async"
-          alt="Ashil & Anaswara"
+          alt="Anaswara & Ashil"
           className="w-full h-[calc(100%-6vh)] mt-[6vh] short-phone:h-[calc(100%-13vh)] short-phone:mt-[13vh] sm:h-[calc(100%-9vh)] sm:mt-[9vh] sm:object-[center_35%] lg:h-full lg:mt-0 object-cover object-[center_60%] [mask-image:linear-gradient(to_bottom,transparent,black_12%)] lg:[mask-image:none] lg:scale-110 lg:blur-2xl lg:brightness-75"
         />
 
@@ -147,7 +147,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </motion.div>
 
-          {/* Couple's Names: ASHIL & ANASWARA */}
+          {/* Couple's Names: ANASWARA & ASHIL (bride first) */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -156,13 +156,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             <h1 className="flex flex-col items-center justify-center text-center">
               <span className="font-serif font-bold text-[2.3rem] short-phone:text-[2rem] sm:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-[#59131A] tracking-[0.15em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)] uppercase leading-[1.08]">
-                {groomName || 'ASHIL'}
+                {brideName || 'ANASWARA'}
               </span>
               <span className="font-serif italic text-2xl sm:text-4xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#C98F22] my-0.5 sm:my-1 select-none font-light">
                 &
               </span>
               <span className="font-serif font-bold text-[2.3rem] short-phone:text-[2rem] sm:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-[#59131A] tracking-[0.15em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)] uppercase leading-[1.08]">
-                {brideName || 'ANASWARA'}
+                {groomName || 'ASHIL'}
               </span>
             </h1>
           </motion.div>

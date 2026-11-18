@@ -70,11 +70,11 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ brideName, groomNa
 
         <div className="mt-2.5 mb-2 space-y-0.5">
           <h3 className="font-serif font-bold text-[24px] sm:text-[26px] text-[#58181E] tracking-[0.03em] leading-snug uppercase">
-            {groomName}
+            {brideName}
           </h3>
           <p className="font-serif italic text-[18px] text-[#A27B3D] leading-none">&amp;</p>
           <h3 className="font-serif font-bold text-[24px] sm:text-[26px] text-[#58181E] tracking-[0.03em] leading-snug uppercase">
-            {brideName}
+            {groomName}
           </h3>
         </div>
 
@@ -97,7 +97,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ brideName, groomNa
         </motion.button>
 
         <p className="mt-8 font-sans text-[11px] text-[#6E5A4C]/70 tracking-wide">
-          Made with love for the wedding of {groomName} &amp; {brideName} · November 2026
+          Made with love for the wedding of {brideName} &amp; {groomName} · November 2026
         </p>
       </div>
     </footer>

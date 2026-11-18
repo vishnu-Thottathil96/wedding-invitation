@@ -58,20 +58,16 @@ export const StorySection: React.FC = () => {
     }
   };
 
-  // Toggle cord pull handler
-  const handleToggleLight = () => {
+  // The cord is only needed once: after the lights come on it retracts and the lights stay on
+  const [showCord, setShowCord] = useState<boolean>(true);
+
+  const handleLightUp = () => {
+    if (isLightOn || isPulling) return;
     setIsPulling(true);
-    const nextState = !isLightOn;
-
-    playChimeSound(nextState);
-
-    setTimeout(() => {
-      setIsLightOn(nextState);
-    }, 180);
-
-    setTimeout(() => {
-      setIsPulling(false);
-    }, 450);
+    playChimeSound(true);
+    setTimeout(() => setIsLightOn(true), 180);
+    setTimeout(() => setIsPulling(false), 450);
+    setTimeout(() => setShowCord(false), 650);
   };
 
   // 18 bulbs along catenary wire
@@ -229,12 +225,14 @@ export const StorySection: React.FC = () => {
           })}
         </svg>
 
-        {/* ── Interactive Pull Cord: hangs in the top-right corner, clear of the title ── */}
-        <button
+        {/* ── Interactive Pull Cord: shown until the lights are on, then it retracts ── */}
+        <AnimatePresence>
+        {showCord && (
+        <motion.button
           type="button"
-          onClick={handleToggleLight}
-          aria-label={isLightOn ? 'Dim the lights' : 'Pull the cord to light up our story'}
-          aria-pressed={isLightOn}
+          onClick={handleLightUp}
+          aria-label="Pull the cord to light up our story"
+          exit={{ y: -90, opacity: 0, transition: { duration: 0.6, ease: [0.5, 0, 0.75, 0] } }}
           className="absolute top-0 right-[4%] sm:right-[8%] lg:right-[12%] z-40 flex flex-col items-center px-3 pb-2 cursor-pointer select-none group outline-none focus-visible:ring-2 focus-visible:ring-[#F6CA65]/70 rounded-b-2xl"
         >
           {/* Braided golden cord */}
@@ -250,19 +248,11 @@ export const StorySection: React.FC = () => {
 
           {/* Brass drop pull */}
           <motion.div
-            animate={
-              isPulling
-                ? { y: 6, rotate: 0 }
-                : !isLightOn
-                ? { y: 0, rotate: [-5, 5, -5] }
-                : { y: 0, rotate: 0 }
-            }
+            animate={isPulling || isLightOn ? { y: 6, rotate: 0 } : { y: 0, rotate: [-5, 5, -5] }}
             transition={
-              isPulling
+              isPulling || isLightOn
                 ? { type: 'spring', stiffness: 420, damping: 13 }
-                : !isLightOn
-                ? { repeat: Infinity, duration: 2.6, ease: 'easeInOut' }
-                : { duration: 0.4 }
+                : { repeat: Infinity, duration: 2.6, ease: 'easeInOut' }
             }
             style={{ originY: 0 }}
             className="relative flex flex-col items-center -mt-px transition-transform group-hover:scale-110"
@@ -273,11 +263,7 @@ export const StorySection: React.FC = () => {
 
             {/* Teardrop body */}
             <div
-              className={`relative w-[22px] h-[30px] sm:w-[26px] sm:h-[34px] transition-shadow duration-700 ${
-                !isLightOn
-                  ? 'shadow-[0_0_18px_rgba(246,202,101,0.75),0_0_36px_rgba(246,202,101,0.35)]'
-                  : 'shadow-[0_4px_10px_rgba(0,0,0,0.45)]'
-              }`}
+              className="relative w-[22px] h-[30px] sm:w-[26px] sm:h-[34px] shadow-[0_0_18px_rgba(246,202,101,0.75),0_0_36px_rgba(246,202,101,0.35)]"
               style={{
                 borderRadius: '50% 50% 50% 50% / 38% 38% 62% 62%',
                 background:
@@ -292,14 +278,12 @@ export const StorySection: React.FC = () => {
           </motion.div>
 
           {/* Small hint under the pull */}
-          <span
-            className={`mt-1 font-serif italic text-[12px] sm:text-[13px] tracking-wide transition-colors duration-500 ${
-              isLightOn ? 'text-[#E5C582]/70' : 'text-[#F6CA65] animate-pulse'
-            }`}
-          >
-            {isLightOn ? 'dim' : 'pull'}
+          <span className="mt-1 font-serif italic text-[12px] sm:text-[13px] tracking-wide text-[#F6CA65] animate-pulse">
+            pull
           </span>
-        </button>
+        </motion.button>
+        )}
+        </AnimatePresence>
       </div>
 
       {/* ── Central Narrative Content ── */}
@@ -361,7 +345,7 @@ export const StorySection: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.3 }}
-                onClick={handleToggleLight}
+                onClick={handleLightUp}
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-[#C8A452] font-serif italic text-[15px] sm:text-lg tracking-wide cursor-pointer hover:text-[#F6E29F] transition-colors"
               >
                 <span>Pull the cord to light our story</span>
@@ -393,7 +377,7 @@ export const StorySection: React.FC = () => {
         <div className="mt-5 sm:mt-6 w-[88%] max-w-[360px] sm:max-w-[400px] aspect-[9/13.5] rounded-[22px] sm:rounded-[26px] overflow-hidden relative shadow-[0_16px_50px_rgba(0,0,0,0.65)] border border-[#D4AF37]/25 transition-all duration-700">
           <img
             src="/images/story_couple.webp"
-            alt="Ashil & Anaswara"
+            alt="Anaswara & Ashil"
             loading="lazy"
             decoding="async"
             style={{ transitionDelay: isLightOn ? `${PHOTO_REVEAL_DELAY_MS}ms` : '0ms' }}

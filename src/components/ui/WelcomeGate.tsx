@@ -127,7 +127,7 @@ export const WelcomeGate: React.FC<WelcomeGateProps> = ({
   const [flapBehind, setFlapBehind] = useState(false);
   const [cardFront, setCardFront] = useState(false); // card lifted clear of the envelope
   const reduced = Boolean(useReducedMotion());
-  const initials = `${groomName.charAt(0)}&${brideName.charAt(0)}`;
+  const initials = `${brideName.charAt(0)}&${groomName.charAt(0)}`;
 
   const triggerRoses = async () => {
     const confetti = await loadConfetti();
@@ -315,7 +315,7 @@ export const WelcomeGate: React.FC<WelcomeGateProps> = ({
             Together with their families
           </p>
           <h1 className="mt-[1%] font-script text-[10.4cqw] leading-none whitespace-nowrap" style={{ textShadow: '0 1px 0 rgba(255,255,255,0.6)' }}>
-            {groomName} &amp; {brideName}
+            {brideName} &amp; {groomName}
           </h1>
           <p className="mt-[3%] font-cinzel text-[3cqw] tracking-[0.35em]">
             21 · XI · 2026
@@ -359,7 +359,7 @@ export const WelcomeGate: React.FC<WelcomeGateProps> = ({
             className="absolute bottom-[9%] left-0 right-0 text-center font-cinzel text-[8px] sm:text-[10px] tracking-[0.35em]"
             style={{ color: INK, opacity: 0.55 }}
           >
-            {groomName.toUpperCase()} · {brideName.toUpperCase()}
+            {brideName.toUpperCase()} · {groomName.toUpperCase()}
           </p>
         </motion.div>
 

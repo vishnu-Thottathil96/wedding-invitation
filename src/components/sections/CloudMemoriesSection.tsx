@@ -136,7 +136,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
                 >
                   <img
                     src={item.thumb || item.image}
-                    alt={item.title || `Ashil & Anaswara — photo ${index + 1}`}
+                    alt={item.title || `Anaswara & Ashil — photo ${index + 1}`}
                     className="absolute inset-0 w-full h-full object-cover object-[center_60%] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
                     loading="lazy"
                     decoding="async"
@@ -205,7 +205,7 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
               <motion.img
                 key={selectedMemory.id}
                 src={selectedMemory.image}
-                alt={selectedMemory.title || `Ashil & Anaswara — photo ${openIndex + 1}`}
+                alt={selectedMemory.title || `Anaswara & Ashil — photo ${openIndex + 1}`}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
