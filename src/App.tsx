@@ -28,6 +28,7 @@ export default function App() {
     weddingDate,
     venue,
     cloudMemories,
+    galleryLayout,
     music,
   } = weddingData;
 
@@ -86,7 +87,7 @@ export default function App() {
       />
 
       {/* ── 4. Memories ("Above the Clouds" Cloud-Parallax) ── */}
-      <CloudMemoriesSection memories={cloudMemories} />
+      <CloudMemoriesSection memories={cloudMemories} layout={galleryLayout} />
 
       {/* ── 5. Footer ("With Gratitude") ── */}
       <FooterSection

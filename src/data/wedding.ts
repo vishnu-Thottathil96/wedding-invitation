@@ -109,6 +109,8 @@ export interface WeddingData {
   storyMilestones: StoryMilestone[];
   events: EventItem[];
   cloudMemories: CloudMemory[];
+  /** Which photo goes in which column (top to bottom), per screen size. Uses photo ids. */
+  galleryLayout?: { phone: string[][]; tablet: string[][]; desktop: string[][] };
   dressCode: {
     title: string;
     subTitle: string;
@@ -309,17 +311,42 @@ export const weddingData: WeddingData = {
   ],
 
   // Photo gallery ("Floating Memories"). Add a title/caption to any photo if you like.
+  // 5 beach + 5 earlier photos, no repeats, ordered so similar photos never sit together.
   // Photos live in public/images/gallery (grid copies in /thumbs).
   cloudMemories: [
-    { id: 'g05', image: '/images/gallery/g05.webp', thumb: '/images/gallery/thumbs/g05.webp', rotation: -3 },
-    { id: 'g06', image: '/images/gallery/g06.webp', thumb: '/images/gallery/thumbs/g06.webp', rotation: 2.5 },
-    { id: 'g04', image: '/images/gallery/g04.webp', thumb: '/images/gallery/thumbs/g04.webp', rotation: -1.5 },
-    { id: 'g02', image: '/images/gallery/g02.webp', thumb: '/images/gallery/thumbs/g02.webp', rotation: 3 },
-    { id: 'g01', image: '/images/gallery/g01.webp', thumb: '/images/gallery/thumbs/g01.webp', rotation: -2 },
-    { id: 'g03', image: '/images/gallery/g03.webp', thumb: '/images/gallery/thumbs/g03.webp', rotation: 1.5 },
-    { id: 'g08', image: '/images/gallery/g08.webp', thumb: '/images/gallery/thumbs/g08.webp', rotation: -3.5 },
-    { id: 'g07', image: '/images/gallery/g07.webp', thumb: '/images/gallery/thumbs/g07.webp', rotation: 2 },
+    { id: 'beach-promise', image: '/images/gallery/beach-promise.webp', thumb: '/images/gallery/thumbs/beach-promise.webp', rotation: 0 },
+    { id: 'old-wall-stand', image: '/images/gallery/old-wall-stand.webp', thumb: '/images/gallery/thumbs/old-wall-stand.webp', rotation: 0 },
+    { id: 'beach-flowers', image: '/images/gallery/beach-flowers.webp', thumb: '/images/gallery/thumbs/beach-flowers.webp', rotation: 0 },
+    { id: 'old-steps', image: '/images/gallery/old-steps.webp', thumb: '/images/gallery/thumbs/old-steps.webp', rotation: 0 },
+    { id: 'beach-title', image: '/images/gallery/beach-title.webp', thumb: '/images/gallery/thumbs/beach-title.webp', rotation: 0 },
+    { id: 'old-house', image: '/images/gallery/old-house.webp', thumb: '/images/gallery/thumbs/old-house.webp', rotation: 0 },
+    { id: 'beach-lift', image: '/images/gallery/beach-lift.webp', thumb: '/images/gallery/thumbs/beach-lift.webp', rotation: 0 },
+    { id: 'old-mandapam', image: '/images/gallery/old-mandapam.webp', thumb: '/images/gallery/thumbs/old-mandapam.webp', rotation: 0 },
+    { id: 'beach-rocks', image: '/images/gallery/beach-rocks.webp', thumb: '/images/gallery/thumbs/beach-rocks.webp', rotation: 0 },
+    { id: 'old-wall-sit', image: '/images/gallery/old-wall-sit.webp', thumb: '/images/gallery/thumbs/old-wall-sit.webp', rotation: 0 },
   ],
+
+  // Gallery columns, planned per screen size as a checkerboard: beach and earlier photos
+  // alternate, the two laterite-wall photos never touch, and photos with text are spread out.
+  // If you add/remove a photo, any photo not listed here is added to the shortest column.
+  galleryLayout: {
+    phone: [
+      ['beach-promise', 'old-steps', 'beach-title', 'old-wall-stand', 'beach-lift'],
+      ['old-wall-sit', 'beach-rocks', 'old-house', 'beach-flowers', 'old-mandapam'],
+    ],
+    tablet: [
+      ['beach-promise', 'old-wall-stand', 'beach-lift', 'old-mandapam'],
+      ['old-steps', 'beach-flowers', 'old-house'],
+      ['beach-rocks', 'old-wall-sit', 'beach-title'],
+    ],
+    desktop: [
+      ['beach-promise', 'old-house'],
+      ['old-wall-stand', 'beach-lift'],
+      ['beach-flowers', 'old-mandapam'],
+      ['old-steps', 'beach-rocks'],
+      ['beach-title', 'old-wall-sit'],
+    ],
+  },
 
   dressCode: {
     title: 'A Note to Our Cherished Guests',

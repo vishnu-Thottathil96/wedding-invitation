@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CloudMemory } from '../../data/wedding';
 
-// Repeating rhythm of rectangular frame heights for the masonry layout
+// Repeating rhythm of rectangular frame heights, so the columns stagger
 const FRAME_PATTERN = ['aspect-[2/3]', 'aspect-[4/5]', 'aspect-[3/4]', 'aspect-[2/3]', 'aspect-[3/4]', 'aspect-[4/5]'];
 
 // Gold double stripe, like the border of a Kerala kasavu saree
@@ -33,11 +33,59 @@ const DiamondRule: React.FC = () => (
   </div>
 );
 
+type Screen = 'phone' | 'tablet' | 'desktop';
+type GalleryLayout = Record<Screen, string[][]>;
+
 interface CloudMemoriesSectionProps {
   memories: CloudMemory[];
+  layout?: GalleryLayout;
 }
 
-export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memories }) => {
+const COLUMN_COUNT: Record<Screen, number> = { phone: 2, tablet: 3, desktop: 5 };
+
+const getScreen = (): Screen =>
+  window.matchMedia('(min-width: 1024px)').matches
+    ? 'desktop'
+    : window.matchMedia('(min-width: 640px)').matches
+    ? 'tablet'
+    : 'phone';
+
+/** Current screen size bucket, updated when the window crosses a breakpoint */
+const useScreen = (): Screen => {
+  const [screen, setScreen] = useState<Screen>(getScreen);
+  useEffect(() => {
+    const queries = ['(min-width: 1024px)', '(min-width: 640px)'].map((q) => window.matchMedia(q));
+    const update = () => setScreen(getScreen());
+    queries.forEach((q) => q.addEventListener('change', update));
+    return () => queries.forEach((q) => q.removeEventListener('change', update));
+  }, []);
+  return screen;
+};
+
+/** Build the columns for this screen: the planned layout first, then any unlisted photos */
+const buildColumns = (memories: CloudMemory[], screen: Screen, layout?: GalleryLayout) => {
+  const count = COLUMN_COUNT[screen];
+  const byId = new Map(memories.map((m, i) => [m.id, i]));
+  const used = new Set<number>();
+  const columns: number[][] = Array.from({ length: count }, (_, c) =>
+    (layout?.[screen]?.[c] ?? []).flatMap((id) => {
+      const i = byId.get(id);
+      if (i === undefined || used.has(i)) return [];
+      used.add(i);
+      return [i];
+    }),
+  );
+  memories.forEach((_, i) => {
+    if (used.has(i)) return;
+    columns.reduce((a, b) => (b.length < a.length ? b : a)).push(i);
+  });
+  return columns;
+};
+
+export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memories, layout }) => {
+  const screen = useScreen();
+  const columns = useMemo(() => buildColumns(memories, screen, layout), [memories, screen, layout]);
+
   // Index of the photo open in the full-screen viewer (null = closed)
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const selectedMemory = openIndex !== null ? memories[openIndex] : null;
@@ -114,57 +162,61 @@ export const CloudMemoriesSection: React.FC<CloudMemoriesSectionProps> = ({ memo
           </p>
         </motion.header>
 
-        {/* ── Masonry gallery: 2 columns on phones, 3 on tablets, 4 on large screens ── */}
-        <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-5">
-          {memories.map((item, index) => {
-            const aspect = FRAME_PATTERN[index % FRAME_PATTERN.length];
-            const hasNote = Boolean(item.title || item.caption || item.location || item.date);
-            return (
-              <motion.figure
-                key={item.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-30px' }}
-                transition={{ duration: 0.7, delay: (index % 4) * 0.08 }}
-                className="break-inside-avoid mb-3 sm:mb-5"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(index)}
-                  aria-label={`Open photo ${index + 1} of ${total}`}
-                  className={`group relative block w-full overflow-hidden rounded-md ${aspect} bg-[#E9DDC4] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#B8892E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F2E4] shadow-[0_10px_28px_rgba(88,24,30,0.14)] transition-shadow duration-500 hover:shadow-[0_16px_40px_rgba(88,24,30,0.24)]`}
-                >
-                  <img
-                    src={item.thumb || item.image}
-                    alt={item.title || `Anaswara & Ashil — photo ${index + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover object-[center_60%] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
-                    loading="lazy"
-                    decoding="async"
-                  />
+        {/* ── Gallery columns: 2 on phones, 3 on tablets, 5 on large screens, planned per screen ── */}
+        <div className="flex items-start gap-3 sm:gap-5">
+          {columns.map((indexes, col) => (
+            <div key={col} className="flex-1 min-w-0 flex flex-col gap-3 sm:gap-5">
+              {indexes.map((index, row) => {
+                const item = memories[index];
+                const aspect = FRAME_PATTERN[(col * 2 + row) % FRAME_PATTERN.length];
+                const hasNote = Boolean(item.title || item.caption || item.location || item.date);
+                return (
+                  <motion.figure
+                    key={item.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-30px' }}
+                    transition={{ duration: 0.7, delay: col * 0.08 }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOpenIndex(index)}
+                      aria-label={`Open photo ${index + 1} of ${total}`}
+                      className={`group relative block w-full overflow-hidden rounded-md ${aspect} bg-[#E9DDC4] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#B8892E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F2E4] shadow-[0_10px_28px_rgba(88,24,30,0.14)] transition-shadow duration-500 hover:shadow-[0_16px_40px_rgba(88,24,30,0.24)]`}
+                    >
+                      <img
+                        src={item.thumb || item.image}
+                        alt={item.title || `Anaswara & Ashil — photo ${index + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover object-[center_60%] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+                        loading="lazy"
+                        decoding="async"
+                      />
 
-                  {/* Thin gold inner frame (passe-partout) */}
-                  <span
-                    aria-hidden="true"
-                    className={`absolute inset-[7px] sm:inset-[9px] border border-[#F3D78A]/70 rounded-[3px] pointer-events-none transition-colors duration-500 group-hover:border-[#F3D78A]`}
-                  />
+                      {/* Thin gold inner frame (passe-partout) */}
+                      <span
+                        aria-hidden="true"
+                        className={`absolute inset-[7px] sm:inset-[9px] border border-[#F3D78A]/70 rounded-[3px] pointer-events-none transition-colors duration-500 group-hover:border-[#F3D78A]`}
+                      />
 
-                </button>
+                    </button>
 
-                {/* Optional note under the photo */}
-                {hasNote && (
-                  <figcaption className="mt-2 px-1 text-center">
-                    {(item.location || item.date) && (
-                      <span className="block text-[9px] font-sans uppercase tracking-[0.2em] text-[#A27B3D] font-semibold">
-                        {[item.location, item.date].filter(Boolean).join(' • ')}
-                      </span>
+                    {/* Optional note under the photo */}
+                    {hasNote && (
+                      <figcaption className="mt-2 px-1 text-center">
+                        {(item.location || item.date) && (
+                          <span className="block text-[9px] font-sans uppercase tracking-[0.2em] text-[#A27B3D] font-semibold">
+                            {[item.location, item.date].filter(Boolean).join(' • ')}
+                          </span>
+                        )}
+                        {item.title && <span className="block font-serif text-sm sm:text-base text-[#58181E]">{item.title}</span>}
+                        {item.caption && <span className="block font-serif italic text-xs sm:text-sm text-[#5C4D41]">{item.caption}</span>}
+                      </figcaption>
                     )}
-                    {item.title && <span className="block font-serif text-sm sm:text-base text-[#58181E]">{item.title}</span>}
-                    {item.caption && <span className="block font-serif italic text-xs sm:text-sm text-[#5C4D41]">{item.caption}</span>}
-                  </figcaption>
-                )}
-              </motion.figure>
-            );
-          })}
+                  </motion.figure>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         <p className="mt-10 sm:mt-12 text-center font-cinzel text-[10px] sm:text-[11px] tracking-[0.35em] uppercase text-[#A27B3D]/80">
