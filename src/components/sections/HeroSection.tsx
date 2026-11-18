@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Fireflies } from '../ui/Fireflies';
+import heroPhoto from '../../assets/photos/hero_couple.webp';
 
 interface HeroSectionProps {
   brideName?: string;
@@ -81,7 +82,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Phones: photo fills the screen, nudged down so faces clear the date card.
             Wide screens: softly blurred backdrop */}
         <img
-          src="/images/hero_couple.webp"
+          src={heroPhoto}
           fetchPriority="low"
           decoding="async"
           alt="Anaswara & Ashil"
@@ -90,7 +91,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* Wide screens: the full portrait photo, anchored right with a soft left edge */}
         <img
-          src="/images/hero_couple.webp"
+          src={heroPhoto}
           fetchPriority="low"
           decoding="async"
           alt=""

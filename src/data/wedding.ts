@@ -1,6 +1,28 @@
 // ── South Indian Wedding Configuration & Invitation Data ────────────────────────
 // Fully structured single source of truth for the modern royal wedding invitation
 
+// Photos and the song are imported (not served from /public) so every build gives them a
+// fingerprinted file name — browsers can then keep them cached and skip them on reload.
+import bgmUrl from '../assets/audio/bgm.mp3';
+
+const galleryFull = import.meta.glob<string>('../assets/photos/gallery/*.webp', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const galleryThumbs = import.meta.glob<string>('../assets/photos/gallery/thumbs/*.webp', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+
+/** Gallery entry for src/assets/photos/gallery/<id>.webp (+ its grid-size copy in /thumbs) */
+const photo = (id: string): CloudMemory => {
+  const image = galleryFull[`../assets/photos/gallery/${id}.webp`];
+  if (!image) throw new Error(`Gallery photo not found: src/assets/photos/gallery/${id}.webp`);
+  return { id, image, thumb: galleryThumbs[`../assets/photos/gallery/thumbs/${id}.webp`], rotation: 0 };
+};
+
 export interface GalleryImage {
   src: string;
   alt: string;
@@ -312,18 +334,18 @@ export const weddingData: WeddingData = {
 
   // Photo gallery ("Floating Memories"). Add a title/caption to any photo if you like.
   // 5 beach + 5 earlier photos, no repeats, ordered so similar photos never sit together.
-  // Photos live in public/images/gallery (grid copies in /thumbs).
+  // Photos live in src/assets/photos/gallery (grid copies in /thumbs).
   cloudMemories: [
-    { id: 'beach-promise', image: '/images/gallery/beach-promise.webp', thumb: '/images/gallery/thumbs/beach-promise.webp', rotation: 0 },
-    { id: 'old-wall-stand', image: '/images/gallery/old-wall-stand.webp', thumb: '/images/gallery/thumbs/old-wall-stand.webp', rotation: 0 },
-    { id: 'beach-flowers', image: '/images/gallery/beach-flowers.webp', thumb: '/images/gallery/thumbs/beach-flowers.webp', rotation: 0 },
-    { id: 'old-steps', image: '/images/gallery/old-steps.webp', thumb: '/images/gallery/thumbs/old-steps.webp', rotation: 0 },
-    { id: 'beach-title', image: '/images/gallery/beach-title.webp', thumb: '/images/gallery/thumbs/beach-title.webp', rotation: 0 },
-    { id: 'old-house', image: '/images/gallery/old-house.webp', thumb: '/images/gallery/thumbs/old-house.webp', rotation: 0 },
-    { id: 'beach-lift', image: '/images/gallery/beach-lift.webp', thumb: '/images/gallery/thumbs/beach-lift.webp', rotation: 0 },
-    { id: 'old-mandapam', image: '/images/gallery/old-mandapam.webp', thumb: '/images/gallery/thumbs/old-mandapam.webp', rotation: 0 },
-    { id: 'beach-rocks', image: '/images/gallery/beach-rocks.webp', thumb: '/images/gallery/thumbs/beach-rocks.webp', rotation: 0 },
-    { id: 'old-wall-sit', image: '/images/gallery/old-wall-sit.webp', thumb: '/images/gallery/thumbs/old-wall-sit.webp', rotation: 0 },
+    photo('beach-promise'),
+    photo('old-wall-stand'),
+    photo('beach-flowers'),
+    photo('old-steps'),
+    photo('beach-title'),
+    photo('old-house'),
+    photo('beach-lift'),
+    photo('old-mandapam'),
+    photo('beach-rocks'),
+    photo('old-wall-sit'),
   ],
 
   // Gallery columns, planned per screen size as a checkerboard: beach and earlier photos
@@ -437,7 +459,7 @@ export const weddingData: WeddingData = {
   music: {
     // Song file lives in public/audio/ (change this path to swap the song).
     // It starts at full volume when the guest taps the envelope seal.
-    src: '/audio/bgm.mp3',
+    src: bgmUrl,
     title: 'Our Song',
     artist: 'Anaswara & Ashil',
   },

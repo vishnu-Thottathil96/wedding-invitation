@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Fireflies } from '../ui/Fireflies';
+import storyPhoto from '../../assets/photos/story_couple.webp';
 
 const BULB_COUNT = 18;
 const BULB_ON_STEP_MS = 85; // gap between each bulb lighting up
@@ -376,7 +377,7 @@ export const StorySection: React.FC = () => {
         {/* ── Main Couple Portrait Card ── */}
         <div className="mt-5 sm:mt-6 w-[88%] max-w-[360px] sm:max-w-[400px] aspect-[9/13.5] rounded-[22px] sm:rounded-[26px] overflow-hidden relative shadow-[0_16px_50px_rgba(0,0,0,0.65)] border border-[#D4AF37]/25 transition-all duration-700">
           <img
-            src="/images/story_couple.webp"
+            src={storyPhoto}
             alt="Anaswara & Ashil"
             loading="lazy"
             decoding="async"
